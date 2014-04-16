@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -193,6 +194,33 @@ public class FTDevice {
 
         return new FTDevice(DeviceType.values()[devType.getValue()], devID.getValue(), locID.getValue(),
             devSerNum.getString(0), devDesc.getString(0), ftHandle.getValue(), flag.getValue());
+    }
+
+    /**
+     * A command to include a custom VID and PID combination within the internal device list table. This will allow the
+     * driver to load for the specified VID and PID combination. Only supported on Linux and Mac OS X.
+     *
+     * @param dwVID
+     *            Device Vendor ID (VID)
+     * @param dwPID
+     *            Device Product ID (PID)
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public static void setVidPid(int dwVID, int dwPID) throws FTD2XXException {
+        if (Platform.isLinux() || Platform.isMac()) {
+            LOGGER.info("Setting custom VID/PID to {}/{}.", toHex4(dwVID), toHex4(dwPID));
+			
+            ensureFTStatus(ftd2xx.FT_SetVIDPID(dwVID, dwPID));
+        }
+        else {
+            LOGGER.info("Ignoring request to set VID/PID. Windows not supported.");
+        }
+    }
+    
+    private static String toHex4(int value) {
+        // Bitwise and (&) with 0xFFFF is to ensure unsigned value.
+        return String.format("0x%04x", (0xFFFF & value));
     }
 
     /**
