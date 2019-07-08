@@ -23,12 +23,6 @@
  */
 package com.ftdi;
 
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,24 +32,37 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+
 /**
  * Java class to communicate easily to a FTDI device.
+ * 
  * @author Peter Kocsis <p. kocsis. 2. 7182 at gmail.com>
  */
 public class FTDevice {
 
     static private final FTD2XX ftd2xx = FTD2XX.INSTANCE;
+
     private final int devID, devLocationID, flag;
+
     private final DeviceType devType;
-    private Pointer  ftHandle;
+
+    private Pointer ftHandle;
+
     private final String devSerialNumber, devDescription;
+
     private FTDeviceInputStream fTDeviceInputStream = null;
+
     private FTDeviceOutputStream fTDeviceOutputStream = null;
+
     private boolean open = false;
 
-    private FTDevice(DeviceType devType, int devID, int devLocationID,
-            String devSerialNumber, String devDescription, Pointer ftHandle,
-            int flag) {
+    private FTDevice(DeviceType devType, int devID, int devLocationID, String devSerialNumber, String devDescription,
+        Pointer ftHandle, int flag) {
         this.devType = devType;
         this.devID = devID;
         this.devLocationID = devLocationID;
@@ -68,6 +75,7 @@ public class FTDevice {
 
     /**
      * Get device description.
+     * 
      * @return device description
      */
     public String getDevDescription() {
@@ -76,6 +84,7 @@ public class FTDevice {
 
     /**
      * Get device ID.
+     * 
      * @return device ID
      */
     public int getDevID() {
@@ -84,6 +93,7 @@ public class FTDevice {
 
     /**
      * Get device serial number.
+     * 
      * @return device serial number
      */
     public String getDevSerialNumber() {
@@ -92,6 +102,7 @@ public class FTDevice {
 
     /**
      * Get device type.
+     * 
      * @return device type.
      */
     public DeviceType getDevType() {
@@ -100,6 +111,7 @@ public class FTDevice {
 
     /**
      * Get device location.
+     * 
      * @return device location.
      */
     public int getDevLocationID() {
@@ -108,26 +120,29 @@ public class FTDevice {
 
     /**
      * Get device flag.
+     * 
      * @return flag.
      */
     public int getFlag() {
         return flag;
     }
-    
+
     /**
      * determines if the device is in use by anybody
+     * 
      * @return
      */
     public boolean isInUse() {
-    	return ((flag & FTD2XX.FT_FLAGS_OPENED) != 0);
+        return ((flag & FTD2XX.FT_FLAGS_OPENED) != 0);
     }
 
     /**
      * determines if the device was opened already
-     * @return 
+     * 
+     * @return
      */
     public boolean isOpen() {
-    	return this.open;
+        return this.open;
     }
 
     @Override
@@ -151,8 +166,7 @@ public class FTDevice {
 
     @Override
     public String toString() {
-        return "FTDevice{" + "devDescription=" + devDescription
-                + ", devSerialNumber=" + devSerialNumber + '}';
+        return "FTDevice{" + "devDescription=" + devDescription + ", devSerialNumber=" + devSerialNumber + '}';
     }
 
     private static void ensureFTStatus(int ftstatus) throws FTD2XXException {
@@ -170,18 +184,18 @@ public class FTDevice {
         Memory devSerNum = new Memory(16);
         Memory devDesc = new Memory(64);
 
-        ensureFTStatus(ftd2xx.FT_GetDeviceInfoDetail(Xth, flag, devType, devID,
-                locID, devSerNum, devDesc, ftHandle));
+        ensureFTStatus(ftd2xx.FT_GetDeviceInfoDetail(Xth, flag, devType, devID, locID, devSerNum, devDesc, ftHandle));
 
-        return new FTDevice(DeviceType.values()[devType.getValue()],
-                devID.getValue(), locID.getValue(), devSerNum.getString(0),
-                devDesc.getString(0), ftHandle.getValue(), flag.getValue());
+        return new FTDevice(DeviceType.values()[devType.getValue()], devID.getValue(), locID.getValue(),
+            devSerNum.getString(0), devDesc.getString(0), ftHandle.getValue(), flag.getValue());
     }
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
+     * 
      * @return List contain available FTDI devices.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public static List<FTDevice> getDevices() throws FTD2XXException {
         return getDevices(false);
@@ -189,12 +203,14 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices.
-     * @param isIncludeOpenedDevices Would you like to see opened devices?
+     * 
+     * @param isIncludeOpenedDevices
+     *            Would you like to see opened devices?
      * @return List contain available FTDI devices.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public static List<FTDevice> getDevices(boolean isIncludeOpenedDevices)
-            throws FTD2XXException {
+    public static List<FTDevice> getDevices(boolean isIncludeOpenedDevices) throws FTD2XXException {
         IntByReference devNum = new IntByReference();
 
         ensureFTStatus(ftd2xx.FT_CreateDeviceInfoList(devNum));
@@ -203,10 +219,11 @@ public class FTDevice {
 
         for (int i = 0; i < devNum.getValue(); i++) {
             FTDevice device = getXthDevice(i);
-            //device is occupied?
+            // device is occupied?
             if (isIncludeOpenedDevices) {
                 devs.add(device);
-            } else {
+            }
+            else {
                 if ((device.flag & FTD2XX.FT_FLAGS_OPENED) == 0) {
                     devs.add(device);
                 }
@@ -214,21 +231,23 @@ public class FTDevice {
 
         }
 
-        Logger.getLogger(FTDevice.class.getName()).log(Level.INFO,
-                "Found devs: {0} (All:{1})",
-                new Object[]{devs.size(), devNum.getValue()});
+        Logger
+            .getLogger(FTDevice.class.getName())
+            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
 
         return devs;
     }
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * @param description Filtering option, exact match need.
+     * 
+     * @param description
+     *            Filtering option, exact match need.
      * @return List contain available FTDI devices.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public static List<FTDevice> getDevicesByDescription(String description)
-            throws FTD2XXException {
+    public static List<FTDevice> getDevicesByDescription(String description) throws FTD2XXException {
         IntByReference devNum = new IntByReference();
 
         ensureFTStatus(ftd2xx.FT_CreateDeviceInfoList(devNum));
@@ -238,28 +257,29 @@ public class FTDevice {
         for (int i = 0; i < devNum.getValue(); i++) {
             FTDevice device = getXthDevice(i);
 
-            if (((device.flag & FTD2XX.FT_FLAGS_OPENED) == 0)
-                    && description.equals(device.devDescription)) {
+            if (((device.flag & FTD2XX.FT_FLAGS_OPENED) == 0) && description.equals(device.devDescription)) {
                 devs.add(device);
             }
 
         }
 
-        Logger.getLogger(FTDevice.class.getName()).log(Level.INFO,
-                "Found devs: {0} (All:{1})",
-                new Object[]{devs.size(), devNum.getValue()});
+        Logger
+            .getLogger(FTDevice.class.getName())
+            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
 
         return devs;
     }
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * @param serialNumber Filtering option, exact match need.
+     * 
+     * @param serialNumber
+     *            Filtering option, exact match need.
      * @return List contain available FTDI devices.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public static List<FTDevice> getDevicesBySerialNumber(String serialNumber)
-            throws FTD2XXException {
+    public static List<FTDevice> getDevicesBySerialNumber(String serialNumber) throws FTD2XXException {
         IntByReference devNum = new IntByReference();
 
         ensureFTStatus(ftd2xx.FT_CreateDeviceInfoList(devNum));
@@ -269,28 +289,29 @@ public class FTDevice {
         for (int i = 0; i < devNum.getValue(); i++) {
             FTDevice device = getXthDevice(i);
 
-            if (((device.getFlag() & FTD2XX.FT_FLAGS_OPENED) == 0)
-                    && serialNumber.equals(device.devSerialNumber)) {
+            if (((device.getFlag() & FTD2XX.FT_FLAGS_OPENED) == 0) && serialNumber.equals(device.devSerialNumber)) {
                 devs.add(device);
             }
 
         }
 
-        Logger.getLogger(FTDevice.class.getName()).log(Level.INFO,
-                "Found devs: {0} (All:{1})",
-                new Object[]{devs.size(), devNum.getValue()});
+        Logger
+            .getLogger(FTDevice.class.getName())
+            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
 
         return devs;
     }
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * @param deviceType Filtering option.
+     * 
+     * @param deviceType
+     *            Filtering option.
      * @return List contain available FTDI devices.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public static List<FTDevice> getDevicesByDeviceType(DeviceType deviceType)
-            throws FTD2XXException {
+    public static List<FTDevice> getDevicesByDeviceType(DeviceType deviceType) throws FTD2XXException {
         IntByReference devNum = new IntByReference();
 
         ensureFTStatus(ftd2xx.FT_CreateDeviceInfoList(devNum));
@@ -300,48 +321,64 @@ public class FTDevice {
         for (int i = 0; i < devNum.getValue(); i++) {
             FTDevice device = getXthDevice(i);
 
-            if (((device.flag & FTD2XX.FT_FLAGS_OPENED) == 0)
-                    && device.devType.equals(deviceType)) {
+            if (((device.flag & FTD2XX.FT_FLAGS_OPENED) == 0) && device.devType.equals(deviceType)) {
                 devs.add(device);
             }
 
         }
 
-        Logger.getLogger(FTDevice.class.getName()).log(Level.INFO,
-                "Found devs: {0} (All:{1})",
-                new Object[]{devs.size(), devNum.getValue()});
+        Logger
+            .getLogger(FTDevice.class.getName())
+            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
 
         return devs;
     }
 
     /**
      * Open connection with device.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void open() throws FTD2XXException {
         Memory memory = new Memory(16);
         memory.setString(0, devSerialNumber);
-        PointerByReference  handle = new PointerByReference ();
-        ensureFTStatus(ftd2xx.FT_OpenEx(memory, FTD2XX.FT_OPEN_BY_SERIAL_NUMBER,
-                handle));
+        PointerByReference handle = new PointerByReference();
+        ensureFTStatus(ftd2xx.FT_OpenEx(memory, FTD2XX.FT_OPEN_BY_SERIAL_NUMBER, handle));
         this.ftHandle = handle.getValue();
         open = true;
     }
 
     /**
      * Close connection with device.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void close() throws FTD2XXException {
-    	if (!open) return;
-    	open = false;
+        if (!open)
+            return;
+        open = false;
         ensureFTStatus(ftd2xx.FT_Close(ftHandle));
     }
 
     /**
+     * Send a cycle command to the USB port.
+     * 
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public void cyclePort() throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_CyclePort(ftHandle));
+    }
+
+    /**
      * Set desired baud rate.
-     * @param baudRate The baud rate.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param baudRate
+     *            The baud rate.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void setBaudRate(long baudRate) throws FTD2XXException {
         ensureFTStatus(ftd2xx.FT_SetBaudRate(ftHandle, (int) baudRate));
@@ -349,85 +386,104 @@ public class FTDevice {
 
     /**
      * This function sets the data characteristics for the device
-     * @param wordLength Number of bits per word 
-     * @param stopBits Number of stop bits
-     * @param parity Parity
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param wordLength
+     *            Number of bits per word
+     * @param stopBits
+     *            Number of stop bits
+     * @param parity
+     *            Parity
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void setDataCharacteristics(WordLength wordLength, StopBits stopBits,
-            Parity parity) throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetDataCharacteristics(ftHandle,
-                (byte) wordLength.constant(), (byte) stopBits.constant(),
+    public void setDataCharacteristics(WordLength wordLength, StopBits stopBits, Parity parity) throws FTD2XXException {
+        ensureFTStatus(ftd2xx
+            .FT_SetDataCharacteristics(ftHandle, (byte) wordLength.constant(), (byte) stopBits.constant(),
                 (byte) parity.constant()));
     }
 
     /**
      * Set the read and write timeouts for the device.
-     * @param readTimeout Read timeout in milliseconds.
-     * @param writeTimeout Write timeout in milliseconds.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param readTimeout
+     *            Read timeout in milliseconds.
+     * @param writeTimeout
+     *            Write timeout in milliseconds.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void setTimeouts(long readTimeout, long writeTimeout)
-            throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetTimeouts(ftHandle, (int) readTimeout,
-                (int) writeTimeout));
+    public void setTimeouts(long readTimeout, long writeTimeout) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetTimeouts(ftHandle, (int) readTimeout, (int) writeTimeout));
     }
 
     /**
      * Sets the flow control for the device.
-     * @param flowControl Flow control type.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param flowControl
+     *            Flow control type.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void setFlowControl(FlowControl flowControl) throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetFlowControl(ftHandle,
-                (short) flowControl.constant(), (byte) 0, (byte) 0));
+        ensureFTStatus(ftd2xx.FT_SetFlowControl(ftHandle, (short) flowControl.constant(), (byte) 0, (byte) 0));
     }
 
     /**
      * Sets the flow control for the device.
-     * @param flowControl Flow control type.
-     * @param uXon Character used to signal Xon. Only used if flow control is 
-     * FT_FLOW_XON_XOFF
-     * @param uXoff Character used to signal Xoff.  Only used if flow control is 
-     * FT_FLOW_XON_XOFF
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param flowControl
+     *            Flow control type.
+     * @param uXon
+     *            Character used to signal Xon. Only used if flow control is FT_FLOW_XON_XOFF
+     * @param uXoff
+     *            Character used to signal Xoff. Only used if flow control is FT_FLOW_XON_XOFF
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void setFlowControl(FlowControl flowControl, byte uXon, byte uXoff)
-            throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetFlowControl(ftHandle,
-                (short) flowControl.constant(), uXon, uXoff));
+    public void setFlowControl(FlowControl flowControl, byte uXon, byte uXoff) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetFlowControl(ftHandle, (short) flowControl.constant(), uXon, uXoff));
     }
 
     /**
      * Set the Data Terminal Ready (DTR) control signal.
-     * @param status Status of DTR signal.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param status
+     *            Status of DTR signal.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void setDtr(boolean status) throws FTD2XXException {
         if (status) {
             ensureFTStatus(ftd2xx.FT_SetDtr(ftHandle));
-        } else {
+        }
+        else {
             ensureFTStatus(ftd2xx.FT_ClrDtr(ftHandle));
         }
     }
 
     /**
      * Set the Request To Send (RTS) control signal
-     * @param status Status of RTS signal.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param status
+     *            Status of RTS signal.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void setRts(boolean status) throws FTD2XXException {
         if (status) {
             ensureFTStatus(ftd2xx.FT_SetRts(ftHandle));
-        } else {
+        }
+        else {
             ensureFTStatus(ftd2xx.FT_ClrRts(ftHandle));
         }
     }
 
     /**
      * Gets the modem status and line status from the device.
+     * 
      * @return Modem and line statuses
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public EnumSet<DeviceStatus> getDeviceStatus() throws FTD2XXException {
         IntByReference modstat = new IntByReference();
@@ -437,8 +493,10 @@ public class FTDevice {
 
     /**
      * Gets the number of bytes in the receive queue.
+     * 
      * @return The number of bytes in the receive queue
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public int getQueueStatus() throws FTD2XXException {
         IntByReference reference = new IntByReference();
@@ -448,12 +506,15 @@ public class FTDevice {
 
     /**
      * Purge receive or transmit buffers in the device.
-     * @param rxBuffer Will rxBuffer be purged?
-     * @param txBuffer Will txBuffer be purged?
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param rxBuffer
+     *            Will rxBuffer be purged?
+     * @param txBuffer
+     *            Will txBuffer be purged?
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void purgeBuffer(boolean rxBuffer, boolean txBuffer)
-            throws FTD2XXException {
+    public void purgeBuffer(boolean rxBuffer, boolean txBuffer) throws FTD2XXException {
         int mask = 0;
         if (rxBuffer) {
             mask |= Purge.PURGE_RX.constant();
@@ -466,7 +527,9 @@ public class FTDevice {
 
     /**
      * Send a reset command to the device.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void resetDevice() throws FTD2XXException {
         ensureFTStatus(ftd2xx.FT_ResetDevice(ftHandle));
@@ -474,13 +537,15 @@ public class FTDevice {
 
     /**
      * Set the latency timer value.
-     * @param timer Latency timer value in milliseconds. 
-     * Valid range is 2 - 255.
-     * @throws FTD2XXException If something goes wrong.
-     * @throws IllegalArgumentException If timer was not in range 2 - 255.
+     * 
+     * @param timer
+     *            Latency timer value in milliseconds. Valid range is 2 - 255.
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     * @throws IllegalArgumentException
+     *             If timer was not in range 2 - 255.
      */
-    public void setLatencyTimer(short timer) throws FTD2XXException,
-            IllegalArgumentException {
+    public void setLatencyTimer(short timer) throws FTD2XXException, IllegalArgumentException {
         if (!((timer >= 2) && (timer <= 255))) {
             throw new IllegalArgumentException("Valid range is 2 - 255!");
         }
@@ -489,8 +554,10 @@ public class FTDevice {
 
     /**
      * Get the current value of the latency timer.
+     * 
      * @return latency timer value.
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public short getLatencyTimer() throws FTD2XXException {
         ByteByReference byReference = new ByteByReference();
@@ -500,25 +567,27 @@ public class FTDevice {
 
     /**
      * Enables different chip modes.
-     * @param ucMask Required value for bit mode mask.  This sets up which bits
-     * are  inputs and outputs.  A bit value of 0 sets the corresponding pin to 
-     * an input, a bit value of 1 sets the corresponding pin to an output. In 
-     * the case of CBUS Bit Bang, the upper nibble of this value controls which 
-     * pins are inputs and outputs, while the lower nibble controls which of the
-     * outputs are high and low.
-     * @param bitMode Mode value.
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param ucMask
+     *            Required value for bit mode mask. This sets up which bits are inputs and outputs. A bit value of 0
+     *            sets the corresponding pin to an input, a bit value of 1 sets the corresponding pin to an output. In
+     *            the case of CBUS Bit Bang, the upper nibble of this value controls which pins are inputs and outputs,
+     *            while the lower nibble controls which of the outputs are high and low.
+     * @param bitMode
+     *            Mode value.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void setBitMode(byte ucMask, BitModes bitMode)
-            throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetBitMode(ftHandle, ucMask,
-                (byte) bitMode.constant()));
+    public void setBitMode(byte ucMask, BitModes bitMode) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetBitMode(ftHandle, ucMask, (byte) bitMode.constant()));
     }
 
     /**
      * Gets the instantaneous value of the data bus.
+     * 
      * @return instantaneous data bus value
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public BitModes getBitMode() throws FTD2XXException {
         ByteByReference byt = new ByteByReference();
@@ -527,52 +596,54 @@ public class FTDevice {
     }
 
     /**
-     * Set the USB request transfer size.
-     * This function can be used to change the transfer sizes from the default 
-     * transfer size of 4096 bytes to better suit the application requirements.
-     * Transfer sizes must be set to a multiple of 64 bytes between 64 bytes and
-     * 64k bytes.
-     * When FT_SetUSBParameters is called, the change comes into effect
-     * immediately and any data that was held in the driver at the time of the
-     * change is lost. Note that, at present, only dwInTransferSize is 
-     * supported.
-     * @param inTransferSize Transfer size for USB IN request
-     * @param outTransferSize Transfer size for USB OUT request
-     * @throws FTD2XXException If something goes wrong.
+     * Set the USB request transfer size. This function can be used to change the transfer sizes from the default
+     * transfer size of 4096 bytes to better suit the application requirements. Transfer sizes must be set to a multiple
+     * of 64 bytes between 64 bytes and 64k bytes. When FT_SetUSBParameters is called, the change comes into effect
+     * immediately and any data that was held in the driver at the time of the change is lost. Note that, at present,
+     * only dwInTransferSize is supported.
+     * 
+     * @param inTransferSize
+     *            Transfer size for USB IN request
+     * @param outTransferSize
+     *            Transfer size for USB OUT request
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void setUSBParameters(int inTransferSize, int outTransferSize)
-            throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_SetUSBParameters(ftHandle, inTransferSize,
-                outTransferSize));
+    public void setUSBParameters(int inTransferSize, int outTransferSize) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetUSBParameters(ftHandle, inTransferSize, outTransferSize));
     }
 
     /**
      * Program the EEPROM data
-     * @param programData EEPROM to program
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param programData
+     *            EEPROM to program
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public void writeEEPROM(EEPROMData programData)
-            throws FTD2XXException {
-        ensureFTStatus(ftd2xx.FT_EE_Program(ftHandle,
-                programData.ft_program_data));
+    public void writeEEPROM(EEPROMData programData) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_EE_Program(ftHandle, programData.ft_program_data));
     }
 
     /**
      * Read device EEPROM data
+     * 
      * @return EEPROM data
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public EEPROMData readEEPROM() throws FTD2XXException {
-        FTD2XX.FT_PROGRAM_DATA.ByReference ftByReference =
-                new FTD2XX.FT_PROGRAM_DATA.ByReference();
+        FTD2XX.FT_PROGRAM_DATA.ByReference ftByReference = new FTD2XX.FT_PROGRAM_DATA.ByReference();
         ensureFTStatus(ftd2xx.FT_EE_Read(ftHandle, ftByReference));
         return new EEPROMData(ftByReference);
     }
 
     /**
      * Get the available size of the EEPROM user area
+     * 
      * @return available size in bytes, of the EEPROM user area
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public int getEEPROMUserAreaSize() throws FTD2XXException {
         IntByReference size = new IntByReference();
@@ -582,48 +653,54 @@ public class FTDevice {
 
     /**
      * Read the contents of the EEPROM user area
-     * @param numberOfBytes Size in bytes, to be read
+     * 
+     * @param numberOfBytes
+     *            Size in bytes, to be read
      * @return User EEPROM content
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public byte[] readEEPROMUserArea(int numberOfBytes)
-            throws FTD2XXException {
+    public byte[] readEEPROMUserArea(int numberOfBytes) throws FTD2XXException {
         IntByReference actually = new IntByReference();
         Memory dest = new Memory(numberOfBytes);
-        ensureFTStatus(ftd2xx.FT_EE_UARead(ftHandle, dest, numberOfBytes,
-                actually));
+        ensureFTStatus(ftd2xx.FT_EE_UARead(ftHandle, dest, numberOfBytes, actually));
         return dest.getByteArray(0, actually.getValue());
     }
 
     /**
      * Read all contents of the EEPROM user area
+     * 
      * @return User EEPROM content
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public byte[] readFullEEPROMUserArea()
-            throws FTD2XXException {
+    public byte[] readFullEEPROMUserArea() throws FTD2XXException {
         int numberOfBytes = getEEPROMUserAreaSize();
         return readEEPROMUserArea(numberOfBytes);
     }
 
     /**
      * Read all contents of the EEPROM user area as String
+     * 
      * @return User EEPROM content as String
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public String readFullEEPROMUserAreaAsString() throws IOException {
         IntByReference actually = new IntByReference();
         int numberOfBytes = getEEPROMUserAreaSize();
         Memory dest = new Memory(numberOfBytes);
-        ensureFTStatus(ftd2xx.FT_EE_UARead(ftHandle, dest, numberOfBytes,
-                actually));
+        ensureFTStatus(ftd2xx.FT_EE_UARead(ftHandle, dest, numberOfBytes, actually));
         return dest.getString(0);
     }
 
     /**
      * Write data into the EEPROM user area
-     * @param data byte[] to write
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param data
+     *            byte[] to write
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void writeEEPROMUserArea(byte[] data) throws FTD2XXException {
         Memory source = new Memory(data.length);
@@ -633,8 +710,11 @@ public class FTDevice {
 
     /**
      * Write string into the EEPROM user area
-     * @param data byte[] to write
-     * @throws FTD2XXException If something goes wrong.
+     * 
+     * @param data
+     *            byte[] to write
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public void writeEEPROMUserArea(String data) throws FTD2XXException {
         Memory source = new Memory(data.length());
@@ -644,14 +724,18 @@ public class FTDevice {
 
     /**
      * Write bytes to device.
-     * @param bytes Byte array to send
-     * @param offset Start index
-     * @param length Amount of bytes to write
+     * 
+     * @param bytes
+     *            Byte array to send
+     * @param offset
+     *            Start index
+     * @param length
+     *            Amount of bytes to write
      * @return Number of bytes actually written
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public int write(byte[] bytes, int offset, int length)
-            throws FTD2XXException {
+    public int write(byte[] bytes, int offset, int length) throws FTD2XXException {
         Memory memory = new Memory(length);
         memory.write(0, bytes, offset, length);
         IntByReference wrote = new IntByReference();
@@ -663,9 +747,12 @@ public class FTDevice {
 
     /**
      * Write bytes to device.
-     * @param bytes Byte array to send
+     * 
+     * @param bytes
+     *            Byte array to send
      * @return Number of bytes actually written
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public int write(byte[] bytes) throws FTD2XXException {
         return write(bytes, 0, bytes.length);
@@ -673,9 +760,11 @@ public class FTDevice {
 
     /**
      * Write byte to device.
-     * @param b Byte to send (0..255)
+     * 
+     * @param b
+     *            Byte to send (0..255)
      * @return It was success?
-     * @throws FTD2XXException  
+     * @throws FTD2XXException
      */
     public boolean write(int b) throws FTD2XXException {
         byte[] c = new byte[1];
@@ -685,14 +774,18 @@ public class FTDevice {
 
     /**
      * Read bytes from device.
-     * @param bytes Bytes array to store read bytes
-     * @param offset Start index.
-     * @param lenght Amount of bytes to read
+     * 
+     * @param bytes
+     *            Bytes array to store read bytes
+     * @param offset
+     *            Start index.
+     * @param lenght
+     *            Amount of bytes to read
      * @return Number of bytes actually read
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public int read(byte[] bytes, int offset, int lenght)
-            throws FTD2XXException {
+    public int read(byte[] bytes, int offset, int lenght) throws FTD2XXException {
         Memory memory = new Memory(lenght);
         IntByReference read = new IntByReference();
 
@@ -705,9 +798,12 @@ public class FTDevice {
 
     /**
      * Read bytes from device.
-     * @param bytes Bytes array to store read bytes
+     * 
+     * @param bytes
+     *            Bytes array to store read bytes
      * @return Number of bytes actually read
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
     public int read(byte[] bytes) throws FTD2XXException {
         return read(bytes, 0, bytes.length);
@@ -715,8 +811,9 @@ public class FTDevice {
 
     /**
      * Read a byte from device.
+     * 
      * @return The byte what read or -1;
-     * @throws FTD2XXException 
+     * @throws FTD2XXException
      */
     public int read() throws FTD2XXException {
         byte[] c = new byte[1];
@@ -726,25 +823,29 @@ public class FTDevice {
 
     /**
      * Read given bytes from device.
-     * @param number How many bytes do you want to read?
+     * 
+     * @param number
+     *            How many bytes do you want to read?
      * @return Read bytes
-     * @throws FTD2XXException If something goes wrong.
+     * @throws FTD2XXException
+     *             If something goes wrong.
      */
-    public byte[] read(int number)
-            throws FTD2XXException {
+    public byte[] read(int number) throws FTD2XXException {
         byte[] ret = new byte[number];
         int actually = read(ret);
         if (actually != number) {
             byte[] shrink = new byte[actually];
             System.arraycopy(ret, 0, shrink, 0, actually);
             return shrink;
-        } else {
+        }
+        else {
             return ret;
         }
     }
 
     /**
      * Get an InputStream to device.
+     * 
      * @return InputStream
      */
     public InputStream getInputStream() {
@@ -756,6 +857,7 @@ public class FTDevice {
 
     /**
      * Get an OutputStream to device.
+     * 
      * @return OutputStream
      */
     public OutputStream getOutputStream() {
@@ -769,7 +871,8 @@ public class FTDevice {
     protected void finalize() throws Throwable {
         try {
             close();
-        } catch (FTD2XXException ex) {
+        }
+        catch (FTD2XXException ex) {
         }
         super.finalize();
     }
