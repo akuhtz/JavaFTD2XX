@@ -23,6 +23,12 @@
  */
 package com.ftdi;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.StringTokenizer;
+
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -46,14 +52,88 @@ interface FTD2XX extends Library {
         private Loader() {
         }
 
-        static String getNative() {
-            // for now we assume we are on windows, and the driver is installed already
+        private static String getDriverPath() {
+            String libraryName = "ftd2xx";
+            StringBuilder libraryPathBuilder = new StringBuilder("/natives/");
+
             if (Platform.isWindows()) {
-                return "ftd2xx.dll";
+                libraryPathBuilder.append("win32-");
+                libraryPathBuilder.append(Platform.ARCH);
+            }
+            else if (Platform.isLinux()) {
+                libraryPathBuilder.append("linux-");
+                libraryPathBuilder.append(Platform.ARCH);
+            }
+            else if (Platform.isMac()) {
+                libraryPathBuilder.append("darwin");
+            }
+
+            libraryPathBuilder.append('/');
+
+            return libraryPathBuilder.toString() + System.mapLibraryName(libraryName);
+        }
+
+        static String getNative() {
+            InputStream in = null;
+            FileOutputStream fos = null;
+            File fileOut = null;
+            System.setProperty("jna.library.path", System.getProperty("java.io.tmpdir"));
+
+            String res;
+            in = Loader.class.getResourceAsStream(getDriverPath());
+            if (in != null) {
+                try {
+                    fileOut =
+                        File
+                            .createTempFile(Platform.isMac() ? "lib" : "" + "ftd2xx",
+                                Platform.isWindows() ? ".dll" : Platform.isLinux() ? ".so" : ".dylib");
+                    fileOut.deleteOnExit();
+                    fos = new FileOutputStream(fileOut);
+                    int count;
+                    byte[] buf = new byte[1024];
+                    while ((count = in.read(buf, 0, buf.length)) > 0) {
+                        fos.write(buf, 0, count);
+                    }
+                }
+                catch (IOException ex) {
+                    throw new Error("Failed to create temporary file " + "for d2xx library: " + ex);
+                }
+                finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        }
+                        catch (IOException ex) {
+                        }
+                    }
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        }
+                        catch (IOException ex) {
+                        }
+                    }
+                }
+                if (Platform.isMac()) {
+                    StringTokenizer st = new StringTokenizer(fileOut.getName(), ".");
+                    res = st.nextToken().substring(3);
+                }
+                else {
+                    res = fileOut.getName();
+                }
+                return res;
             }
             else {
-                throw new Error("OS not supported");
+                throw new Error("Not supported OS");
             }
+
+            // // for now we assume we are on windows, and the driver is installed already
+            // if (Platform.isWindows()) {
+            // return "ftd2xx.dll";
+            // }
+            // else {
+            // throw new Error("OS not supported");
+            // }
         }
     }
 
@@ -70,6 +150,7 @@ interface FTD2XX extends Library {
         public final static int FT_EVENT_RXCHAR = 1, FT_EVENT_MODEM_STATUS = 2, FT_EVENT_LINE_STATUS = 4;
     }
 
+    @FieldOrder({ "Flags", "Type", "ID", "LocId", "SerialNumber", "Description", "ftHandle" })
     public static class FT_DEVICE_LIST_INFO_NODE extends Structure {
 
         public int Flags;
