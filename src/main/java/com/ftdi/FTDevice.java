@@ -130,7 +130,7 @@ public class FTDevice {
     /**
      * determines if the device is in use by anybody
      * 
-     * @return
+     * @return {@code true} if the device is in use by anybody, {@code false} otherwise
      */
     public boolean isInUse() {
         return ((flag & FTD2XX.FT_FLAGS_OPENED) != 0);
@@ -139,7 +139,7 @@ public class FTDevice {
     /**
      * determines if the device was opened already
      * 
-     * @return
+     * @return the open state
      */
     public boolean isOpen() {
         return this.open;
