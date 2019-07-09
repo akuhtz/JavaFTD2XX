@@ -12,7 +12,7 @@
     <description>jBiDiB FTDI D2XX POM</description>
 
 	<properties>
-        <gpg.useagent>false</gpg.useagent>
+        <gpg.useagent>true</gpg.useagent>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
