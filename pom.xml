@@ -6,7 +6,7 @@
 
 	<groupId>org.bidib.com.ftdi</groupId>
 	<artifactId>FTD2xxJ</artifactId>
-	<version>0.3.2</version>
+	<version>0.3.3-SNAPSHOT</version>
 
     <name>jBiDiB :: FTDI D2XX</name>
     <description>jBiDiB FTDI D2XX POM</description>
