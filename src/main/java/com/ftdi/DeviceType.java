@@ -37,7 +37,8 @@ public enum DeviceType {
     DEVICE_232R,
     DEVICE_2232H,
     DEVICE_4232H,
-    DEVICE_232H;
+    DEVICE_232H,
+    DEVICE_X_SERIES;
     
     int constant(){
         return this.ordinal();
