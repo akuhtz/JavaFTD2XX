@@ -40,7 +40,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Java class to communicate easily to a FTDI device.
- * 
+ *
  * @author Peter Kocsis <p. kocsis. 2. 7182 at gmail.com>
  */
 public class FTDevice {
@@ -75,7 +75,7 @@ public class FTDevice {
 
     /**
      * Get device description.
-     * 
+     *
      * @return device description
      */
     public String getDevDescription() {
@@ -84,7 +84,7 @@ public class FTDevice {
 
     /**
      * Get device ID.
-     * 
+     *
      * @return device ID
      */
     public int getDevID() {
@@ -93,7 +93,7 @@ public class FTDevice {
 
     /**
      * Get device serial number.
-     * 
+     *
      * @return device serial number
      */
     public String getDevSerialNumber() {
@@ -102,7 +102,7 @@ public class FTDevice {
 
     /**
      * Get device type.
-     * 
+     *
      * @return device type.
      */
     public DeviceType getDevType() {
@@ -111,7 +111,7 @@ public class FTDevice {
 
     /**
      * Get device location.
-     * 
+     *
      * @return device location.
      */
     public int getDevLocationID() {
@@ -120,7 +120,7 @@ public class FTDevice {
 
     /**
      * Get device flag.
-     * 
+     *
      * @return flag.
      */
     public int getFlag() {
@@ -129,7 +129,7 @@ public class FTDevice {
 
     /**
      * determines if the device is in use by anybody
-     * 
+     *
      * @return {@code true} if the device is in use by anybody, {@code false} otherwise
      */
     public boolean isInUse() {
@@ -138,7 +138,7 @@ public class FTDevice {
 
     /**
      * determines if the device was opened already
-     * 
+     *
      * @return the open state
      */
     public boolean isOpen() {
@@ -192,7 +192,7 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * 
+     *
      * @return List contain available FTDI devices.
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -203,7 +203,7 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices.
-     * 
+     *
      * @param isIncludeOpenedDevices
      *            Would you like to see opened devices?
      * @return List contain available FTDI devices.
@@ -240,7 +240,7 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * 
+     *
      * @param description
      *            Filtering option, exact match need.
      * @return List contain available FTDI devices.
@@ -272,7 +272,7 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * 
+     *
      * @param serialNumber
      *            Filtering option, exact match need.
      * @return List contain available FTDI devices.
@@ -304,7 +304,7 @@ public class FTDevice {
 
     /**
      * Get the connected FTDI devices. It will not contain opened devices.
-     * 
+     *
      * @param deviceType
      *            Filtering option.
      * @return List contain available FTDI devices.
@@ -336,7 +336,7 @@ public class FTDevice {
 
     /**
      * Open connection with device.
-     * 
+     *
      * @throws FTD2XXException
      *             If something goes wrong.
      */
@@ -351,7 +351,7 @@ public class FTDevice {
 
     /**
      * Close connection with device.
-     * 
+     *
      * @throws FTD2XXException
      *             If something goes wrong.
      */
@@ -364,7 +364,7 @@ public class FTDevice {
 
     /**
      * Send a cycle command to the USB port.
-     * 
+     *
      * @throws FTD2XXException
      *             If something goes wrong.
      */
@@ -374,7 +374,7 @@ public class FTDevice {
 
     /**
      * Set desired baud rate.
-     * 
+     *
      * @param baudRate
      *            The baud rate.
      * @throws FTD2XXException
@@ -386,7 +386,7 @@ public class FTDevice {
 
     /**
      * This function sets the data characteristics for the device
-     * 
+     *
      * @param wordLength
      *            Number of bits per word
      * @param stopBits
@@ -404,7 +404,7 @@ public class FTDevice {
 
     /**
      * Set the read and write timeouts for the device.
-     * 
+     *
      * @param readTimeout
      *            Read timeout in milliseconds.
      * @param writeTimeout
@@ -418,7 +418,7 @@ public class FTDevice {
 
     /**
      * Sets the flow control for the device.
-     * 
+     *
      * @param flowControl
      *            Flow control type.
      * @throws FTD2XXException
@@ -430,7 +430,7 @@ public class FTDevice {
 
     /**
      * Sets the flow control for the device.
-     * 
+     *
      * @param flowControl
      *            Flow control type.
      * @param uXon
@@ -446,7 +446,7 @@ public class FTDevice {
 
     /**
      * Set the Data Terminal Ready (DTR) control signal.
-     * 
+     *
      * @param status
      *            Status of DTR signal.
      * @throws FTD2XXException
@@ -463,7 +463,7 @@ public class FTDevice {
 
     /**
      * Set the Request To Send (RTS) control signal
-     * 
+     *
      * @param status
      *            Status of RTS signal.
      * @throws FTD2XXException
@@ -480,7 +480,7 @@ public class FTDevice {
 
     /**
      * Gets the modem status and line status from the device.
-     * 
+     *
      * @return Modem and line statuses
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -493,7 +493,7 @@ public class FTDevice {
 
     /**
      * Gets the number of bytes in the receive queue.
-     * 
+     *
      * @return The number of bytes in the receive queue
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -506,7 +506,7 @@ public class FTDevice {
 
     /**
      * Purge receive or transmit buffers in the device.
-     * 
+     *
      * @param rxBuffer
      *            Will rxBuffer be purged?
      * @param txBuffer
@@ -527,7 +527,7 @@ public class FTDevice {
 
     /**
      * Send a reset command to the device.
-     * 
+     *
      * @throws FTD2XXException
      *             If something goes wrong.
      */
@@ -537,7 +537,7 @@ public class FTDevice {
 
     /**
      * Set the latency timer value.
-     * 
+     *
      * @param timer
      *            Latency timer value in milliseconds. Valid range is 2 - 255.
      * @throws FTD2XXException
@@ -554,7 +554,7 @@ public class FTDevice {
 
     /**
      * Get the current value of the latency timer.
-     * 
+     *
      * @return latency timer value.
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -567,7 +567,7 @@ public class FTDevice {
 
     /**
      * Enables different chip modes.
-     * 
+     *
      * @param ucMask
      *            Required value for bit mode mask. This sets up which bits are inputs and outputs. A bit value of 0
      *            sets the corresponding pin to an input, a bit value of 1 sets the corresponding pin to an output. In
@@ -584,7 +584,7 @@ public class FTDevice {
 
     /**
      * Gets the instantaneous value of the data bus.
-     * 
+     *
      * @return instantaneous data bus value
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -601,7 +601,7 @@ public class FTDevice {
      * of 64 bytes between 64 bytes and 64k bytes. When FT_SetUSBParameters is called, the change comes into effect
      * immediately and any data that was held in the driver at the time of the change is lost. Note that, at present,
      * only dwInTransferSize is supported.
-     * 
+     *
      * @param inTransferSize
      *            Transfer size for USB IN request
      * @param outTransferSize
@@ -615,7 +615,7 @@ public class FTDevice {
 
     /**
      * Program the EEPROM data
-     * 
+     *
      * @param programData
      *            EEPROM to program
      * @throws FTD2XXException
@@ -627,7 +627,7 @@ public class FTDevice {
 
     /**
      * Read device EEPROM data
-     * 
+     *
      * @return EEPROM data
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -639,8 +639,65 @@ public class FTDevice {
     }
 
     /**
+     * Read X series device EEPROM data
+     * Check D2xx Programmer's Guide Appendix A for details
+     * @return FT_EEPROM_X_SERIES data
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public EepromX readEEPROM_X() throws FTD2XXException {
+        EepromX eeprom = new EepromX();
+        Memory manufacturer = new Memory(64);
+        Memory manufacturerId = new Memory(64);
+        Memory description = new Memory(64);
+        Memory serialNumber = new Memory(64);
+
+        Memory mem = new Memory(56);
+        mem.setInt(0, 9);
+
+        ensureFTStatus(ftd2xx.FT_EEPROM_Read(ftHandle, eeprom.eeprom, eeprom.eeprom.size(),
+                manufacturer, manufacturerId, description, serialNumber));
+
+        eeprom.setManufacturer(manufacturer.getString(0));
+        eeprom.setManufacturerId(manufacturerId.getString(0));
+        eeprom.setDescription(description.getString(0));
+        eeprom.setSerialNumber(serialNumber.getString(0));
+
+        return eeprom;
+    }
+
+    /**
+     * Write X series device EEPROM data
+     * Check D2xx Programmer's Guide Appendix A for details
+     * @param eeprom
+     *              data
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public void writeEEPROM_X(EepromX eeprom) throws FTD2XXException {
+        String manufacturer = eeprom.getManufacturer();
+        Memory mManufacturer = new Memory(manufacturer.length() + 1);
+        mManufacturer.setString(0, manufacturer);
+
+        String manufacturerId = eeprom.getManufacturerId();
+        Memory mManufacturerId = new Memory(manufacturerId.length() + 1);
+        mManufacturerId.setString(0, manufacturerId);
+
+        String description = eeprom.getDescription();
+        Memory mDescription = new Memory(description.length() + 1);
+        mDescription.setString(0, description);
+
+        String serialNumber = eeprom.getSerialNumber();
+        Memory mSerialNumber = new Memory(serialNumber.length() + 1);
+        mSerialNumber.setString(0, serialNumber);
+
+        ensureFTStatus(ftd2xx.FT_EEPROM_Program(ftHandle, eeprom.eeprom,
+                eeprom.eeprom.size(), mManufacturer, mManufacturerId, mDescription, mSerialNumber));
+    }
+
+    /**
      * Get the available size of the EEPROM user area
-     * 
+     *
      * @return available size in bytes, of the EEPROM user area
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -653,7 +710,7 @@ public class FTDevice {
 
     /**
      * Read the contents of the EEPROM user area
-     * 
+     *
      * @param numberOfBytes
      *            Size in bytes, to be read
      * @return User EEPROM content
@@ -669,7 +726,7 @@ public class FTDevice {
 
     /**
      * Read all contents of the EEPROM user area
-     * 
+     *
      * @return User EEPROM content
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -681,7 +738,7 @@ public class FTDevice {
 
     /**
      * Read all contents of the EEPROM user area as String
-     * 
+     *
      * @return User EEPROM content as String
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -696,7 +753,7 @@ public class FTDevice {
 
     /**
      * Write data into the EEPROM user area
-     * 
+     *
      * @param data
      *            byte[] to write
      * @throws FTD2XXException
@@ -710,7 +767,7 @@ public class FTDevice {
 
     /**
      * Write string into the EEPROM user area
-     * 
+     *
      * @param data
      *            byte[] to write
      * @throws FTD2XXException
@@ -724,7 +781,7 @@ public class FTDevice {
 
     /**
      * Write bytes to device.
-     * 
+     *
      * @param bytes
      *            Byte array to send
      * @param offset
@@ -747,7 +804,7 @@ public class FTDevice {
 
     /**
      * Write bytes to device.
-     * 
+     *
      * @param bytes
      *            Byte array to send
      * @return Number of bytes actually written
@@ -760,7 +817,7 @@ public class FTDevice {
 
     /**
      * Write byte to device.
-     * 
+     *
      * @param b
      *            Byte to send (0..255)
      * @return It was success?
@@ -774,7 +831,7 @@ public class FTDevice {
 
     /**
      * Read bytes from device.
-     * 
+     *
      * @param bytes
      *            Bytes array to store read bytes
      * @param offset
@@ -798,7 +855,7 @@ public class FTDevice {
 
     /**
      * Read bytes from device.
-     * 
+     *
      * @param bytes
      *            Bytes array to store read bytes
      * @return Number of bytes actually read
@@ -811,7 +868,7 @@ public class FTDevice {
 
     /**
      * Read a byte from device.
-     * 
+     *
      * @return The byte what read or -1;
      * @throws FTD2XXException
      */
@@ -823,7 +880,7 @@ public class FTDevice {
 
     /**
      * Read given bytes from device.
-     * 
+     *
      * @param number
      *            How many bytes do you want to read?
      * @return Read bytes
@@ -845,7 +902,7 @@ public class FTDevice {
 
     /**
      * Get an InputStream to device.
-     * 
+     *
      * @return InputStream
      */
     public InputStream getInputStream() {
@@ -857,7 +914,7 @@ public class FTDevice {
 
     /**
      * Get an OutputStream to device.
-     * 
+     *
      * @return OutputStream
      */
     public OutputStream getOutputStream() {

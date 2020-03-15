@@ -1423,6 +1423,52 @@ interface FTD2XX extends Library {
         String Description, String SerialNumber);
 
     /**
+     * Read the contents of the EEPROM and pass strings separately.
+     *
+     * @param ftHandle
+     *            Handle of the device.
+     * @param eepromData
+     *            Pointer to a buffer that contains the data to be read.
+     * @param eepromDataSize
+     *            Size of the eepromData buffer that contains storage for the data to be read.
+     * @param Manufacturer
+     *            Pointer to a null-terminated string containing the manufacturer name.
+     * @param ManufacturerId
+     *            Pointer to a null-terminated string containing the manufacturer ID.
+     * @param Description
+     *            Pointer to a null-terminated string containing the device description.
+     * @param SerialNumber
+     *            Pointer to a null-terminated string containing the device serial number.
+     * @return FT_STATUS: FT_OK if successful, otherwise the return value is an FT error code.
+     */
+    int FT_EEPROM_Read(
+        Pointer ftHandle, Structure eepromData, int eepromDataSize, Pointer Manufacturer, Pointer ManufacturerId,
+        Pointer Description, Pointer SerialNumber);
+
+    /**
+     * Write the contents of the EEPROM and pass strings separately.
+     *
+     * @param ftHandle
+     *            Handle of the device.
+     * @param eepromData
+     *            Pointer to a buffer that contains the data to be read.
+     * @param eepromDataSize
+     *            Size of the eepromData buffer that contains storage for the data to be read.
+     * @param Manufacturer
+     *            Pointer to a null-terminated string containing the manufacturer name.
+     * @param ManufacturerId
+     *            Pointer to a null-terminated string containing the manufacturer ID.
+     * @param Description
+     *            Pointer to a null-terminated string containing the device description.
+     * @param SerialNumber
+     *            Pointer to a null-terminated string containing the device serial number.
+     * @return FT_STATUS: FT_OK if successful, otherwise the return value is an FT error code.
+     */
+    int FT_EEPROM_Program(
+        Pointer ftHandle, Structure eepromData, int eepromDataSize, Pointer Manufacturer, Pointer ManufacturerId,
+        Pointer Description, Pointer SerialNumber);
+
+    /**
      * Program the EEPROM.
      * 
      * @param ftHandle
