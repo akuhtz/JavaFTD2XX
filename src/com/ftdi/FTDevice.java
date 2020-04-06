@@ -137,7 +137,6 @@ public class FTDevice {
     }
 
     private static void ensureFTStatus(int ftstatus) throws FTD2XXException {
-    	System.out.println("ensureFTStatus: " + ftstatus);
         if (!(ftstatus == FT_STATUS.OK.constant())) {
             throw new FTD2XXException(ftstatus);
         }
