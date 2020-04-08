@@ -53,7 +53,8 @@ public class FTDevice {
 
     private Pointer ftHandle;
 
-    private final String devSerialNumber, devDescription;
+    private String devSerialNumber;
+    private String devDescription;
 
     private FTDeviceInputStream fTDeviceInputStream = null;
 
@@ -660,8 +661,10 @@ public class FTDevice {
 
         eeprom.setManufacturer(manufacturer.getString(0));
         eeprom.setManufacturerId(manufacturerId.getString(0));
-        eeprom.setDescription(description.getString(0));
-        eeprom.setSerialNumber(serialNumber.getString(0));
+        devDescription = description.getString(0);
+        eeprom.setDescription(devDescription);
+        devSerialNumber = serialNumber.getString(0);
+        eeprom.setSerialNumber(devSerialNumber);
 
         return eeprom;
     }
@@ -693,6 +696,9 @@ public class FTDevice {
 
         ensureFTStatus(ftd2xx.FT_EEPROM_Program(ftHandle, eeprom.eeprom,
                 eeprom.eeprom.size(), mManufacturer, mManufacturerId, mDescription, mSerialNumber));
+
+        devSerialNumber = serialNumber;
+        devDescription = description;
     }
 
     /**
