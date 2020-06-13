@@ -29,8 +29,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -45,6 +46,8 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class FTDevice {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FTDevice.class);
+
     static private final FTD2XX ftd2xx = FTD2XX.INSTANCE;
 
     private final int devID, devLocationID, flag;
@@ -54,6 +57,7 @@ public class FTDevice {
     private Pointer ftHandle;
 
     private String devSerialNumber;
+
     private String devDescription;
 
     private FTDeviceInputStream fTDeviceInputStream = null;
@@ -232,9 +236,7 @@ public class FTDevice {
 
         }
 
-        Logger
-            .getLogger(FTDevice.class.getName())
-            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
+        LOGGER.info("Found devs: {} (All:{})", devs.size(), devNum.getValue());
 
         return devs;
     }
@@ -264,9 +266,7 @@ public class FTDevice {
 
         }
 
-        Logger
-            .getLogger(FTDevice.class.getName())
-            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
+        LOGGER.info("Found devs: {} (All:{})", devs.size(), devNum.getValue());
 
         return devs;
     }
@@ -296,9 +296,7 @@ public class FTDevice {
 
         }
 
-        Logger
-            .getLogger(FTDevice.class.getName())
-            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
+        LOGGER.info("Found devs: {} (All:{})", devs.size(), devNum.getValue());
 
         return devs;
     }
@@ -328,9 +326,7 @@ public class FTDevice {
 
         }
 
-        Logger
-            .getLogger(FTDevice.class.getName())
-            .log(Level.INFO, "Found devs: {0} (All:{1})", new Object[] { devs.size(), devNum.getValue() });
+        LOGGER.info("Found devs: {} (All:{})", devs.size(), devNum.getValue());
 
         return devs;
     }
@@ -563,7 +559,7 @@ public class FTDevice {
     public short getLatencyTimer() throws FTD2XXException {
         ByteByReference byReference = new ByteByReference();
         ensureFTStatus(ftd2xx.FT_GetLatencyTimer(ftHandle, byReference));
-        return (short) ((short) byReference.getValue() & 0xFF);
+        return (short) (byReference.getValue() & 0xFF);
     }
 
     /**
@@ -640,8 +636,8 @@ public class FTDevice {
     }
 
     /**
-     * Read X series device EEPROM data
-     * Check D2xx Programmer's Guide Appendix A for details
+     * Read X series device EEPROM data Check D2xx Programmer's Guide Appendix A for details
+     * 
      * @return FT_EEPROM_X_SERIES data
      * @throws FTD2XXException
      *             If something goes wrong.
@@ -656,8 +652,9 @@ public class FTDevice {
         Memory mem = new Memory(56);
         mem.setInt(0, 9);
 
-        ensureFTStatus(ftd2xx.FT_EEPROM_Read(ftHandle, eeprom.eeprom, eeprom.eeprom.size(),
-                manufacturer, manufacturerId, description, serialNumber));
+        ensureFTStatus(ftd2xx
+            .FT_EEPROM_Read(ftHandle, eeprom.eeprom, eeprom.eeprom.size(), manufacturer, manufacturerId, description,
+                serialNumber));
 
         eeprom.setManufacturer(manufacturer.getString(0));
         eeprom.setManufacturerId(manufacturerId.getString(0));
@@ -670,10 +667,10 @@ public class FTDevice {
     }
 
     /**
-     * Write X series device EEPROM data
-     * Check D2xx Programmer's Guide Appendix A for details
+     * Write X series device EEPROM data Check D2xx Programmer's Guide Appendix A for details
+     * 
      * @param eeprom
-     *              data
+     *            data
      * @throws FTD2XXException
      *             If something goes wrong.
      */
@@ -694,8 +691,9 @@ public class FTDevice {
         Memory mSerialNumber = new Memory(serialNumber.length() + 1);
         mSerialNumber.setString(0, serialNumber);
 
-        ensureFTStatus(ftd2xx.FT_EEPROM_Program(ftHandle, eeprom.eeprom,
-                eeprom.eeprom.size(), mManufacturer, mManufacturerId, mDescription, mSerialNumber));
+        ensureFTStatus(ftd2xx
+            .FT_EEPROM_Program(ftHandle, eeprom.eeprom, eeprom.eeprom.size(), mManufacturer, mManufacturerId,
+                mDescription, mSerialNumber));
 
         devSerialNumber = serialNumber;
         devDescription = description;
@@ -881,7 +879,7 @@ public class FTDevice {
     public int read() throws FTD2XXException {
         byte[] c = new byte[1];
         int ret = read(c);
-        return (ret == 1) ? ((int) c[0] & 0xFF) : -1;
+        return (ret == 1) ? (c[0] & 0xFF) : -1;
     }
 
     /**
