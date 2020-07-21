@@ -1591,7 +1591,7 @@ interface FTD2XX extends Library {
      *            Pointer to unsigned char to store the instantaneous data bus value.
      * @return FT_STATUS: FT_OK if successful, otherwise the return value is an FT error code.
      */
-    int FT_GetBitmode(Pointer ftHandle, ByteByReference pucMode);
+    int FT_GetBitMode(Pointer ftHandle, ByteByReference pucMode);
 
     /**
      * Set the USB request transfer size.
