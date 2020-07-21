@@ -588,7 +588,7 @@ public class FTDevice {
      */
     public BitModes getBitMode() throws FTD2XXException {
         ByteByReference byt = new ByteByReference();
-        ensureFTStatus(ftd2xx.FT_GetBitmode(ftHandle, byt));
+        ensureFTStatus(ftd2xx.FT_GetBitMode(ftHandle, byt));
         return BitModes.parse(byt.getValue());
     }
 
