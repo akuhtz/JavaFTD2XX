@@ -530,6 +530,19 @@ public class FTDevice {
     }
 
     /**
+     * Gets the com port number of the device.
+     *
+     * @return The com port number
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public int getComPortNumber() throws FTD2XXException {
+        IntByReference reference = new IntByReference();
+        ensureFTStatus(ftd2xx.FT_GetComPortNumber(ftHandle, reference));
+        return reference.getValue();
+    }
+    
+    /**
      * Purge receive or transmit buffers in the device.
      *
      * @param rxBuffer
