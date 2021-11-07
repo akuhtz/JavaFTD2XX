@@ -14,6 +14,8 @@
 	<properties>
         <gpg.useagent>true</gpg.useagent>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<jna-version>5.9.0</jna-version>
 	</properties>
 
     <url>https://github.com/akuhtz/JavaFTD2XX.git/</url>
@@ -160,8 +162,13 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
-			<version>5.5.0</version>
+			<version>${jna-version}</version>
 		</dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

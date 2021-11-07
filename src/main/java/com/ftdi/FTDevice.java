@@ -210,14 +210,14 @@ public class FTDevice {
     public static void setVidPid(int dwVID, int dwPID) throws FTD2XXException {
         if (Platform.isLinux() || Platform.isMac()) {
             LOGGER.info("Setting custom VID/PID to {}/{}.", toHex4(dwVID), toHex4(dwPID));
-			
+
             ensureFTStatus(ftd2xx.FT_SetVIDPID(dwVID, dwPID));
         }
         else {
             LOGGER.info("Ignoring request to set VID/PID. Windows not supported.");
         }
     }
-    
+
     private static String toHex4(int value) {
         // Bitwise and (&) with 0xFFFF is to ensure unsigned value.
         return String.format("0x%04x", (0xFFFF & value));
@@ -541,7 +541,22 @@ public class FTDevice {
         ensureFTStatus(ftd2xx.FT_GetComPortNumber(ftHandle, reference));
         return reference.getValue();
     }
-    
+
+    /**
+	 * Set the event notification handler.
+	 * 
+	 * @param eventHandler
+	 *            The event handler
+     * @throws FTD2XXException
+     *             If something goes wrong.
+	 */
+    public void SetEventNotification(Pointer eventHandler) throws FTD2XXException {
+
+        int eventMask = FTD2XX.NotificationEvents.FT_EVENT_RXCHAR;
+        ensureFTStatus(ftd2xx.FT_SetEventNotification(ftHandle, eventMask, eventHandler));
+
+    }
+
     /**
      * Purge receive or transmit buffers in the device.
      *
