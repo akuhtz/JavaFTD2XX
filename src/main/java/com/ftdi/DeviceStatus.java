@@ -28,6 +28,7 @@ import java.util.EnumSet;
 
 /**
  * Modem and line statuses of device.
+ * 
  * @author Peter Kocsis <p. kocsis. 2. 7182 at gmail.com>
  */
 public enum DeviceStatus {
@@ -64,8 +65,9 @@ public enum DeviceStatus {
      * Break Interrupt
      */
     BI(0x10, "Break Interrupt");
-    
+
     private final int constant;
+
     private final String description;
 
     private DeviceStatus(int constant, String description) {
@@ -76,13 +78,17 @@ public enum DeviceStatus {
     int constant() {
         return this.constant;
     }
-    
-    static EnumSet<DeviceStatus> parseToEnumset(int val){
+
+    static EnumSet<DeviceStatus> parseToEnumset(int val) {
         ArrayList<DeviceStatus> enu = new ArrayList<DeviceStatus>();
         for (DeviceStatus curr : DeviceStatus.values()) {
-            if((curr.constant() & val) != 0){
+            if ((curr.constant() & val) != 0) {
                 enu.add(curr);
             }
+        }
+
+        if (enu.isEmpty()) {
+            return EnumSet.noneOf(DeviceStatus.class);
         }
         return EnumSet.copyOf(enu);
     }
@@ -91,5 +97,5 @@ public enum DeviceStatus {
     public String toString() {
         return super.toString() + " (" + description + ")";
     }
-    
+
 }

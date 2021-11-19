@@ -45,7 +45,7 @@ import com.sun.jna.ptr.ShortByReference;
  *
  * @author Peter Kocsis <p. kocsis. 2. 7182 at gmail.com>
  */
-interface FTD2XX extends Library {
+public interface FTD2XX extends Library {
 
     static class Loader {
 
@@ -137,7 +137,7 @@ interface FTD2XX extends Library {
         }
     }
 
-    final FTD2XX INSTANCE = (FTD2XX) Native.load(Loader.getNative(), FTD2XX.class);
+    final FTD2XX INSTANCE = Native.load(Loader.getNative(), FTD2XX.class);
 
     public final static int FT_FLAGS_OPENED = 0x00000001;
 

@@ -530,6 +530,22 @@ public class FTDevice {
     }
 
     /**
+     * Gets the modem status and line status from the device.
+     *
+     * @return array with amountInRxQueue, amountInTxQueue and eventStatus
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public int[] getStatus() throws FTD2XXException {
+        IntByReference lpdwAmountInRxQueue = new IntByReference();
+        IntByReference lpdwAmountInTxQueue = new IntByReference();
+        IntByReference lpdwEventStatus = new IntByReference();
+        ensureFTStatus(ftd2xx.FT_GetStatus(ftHandle, lpdwAmountInRxQueue, lpdwAmountInTxQueue, lpdwEventStatus));
+
+        return new int[] { lpdwAmountInRxQueue.getValue(), lpdwAmountInTxQueue.getValue(), lpdwEventStatus.getValue() };
+    }
+
+    /**
      * Gets the com port number of the device.
      *
      * @return The com port number
@@ -543,18 +559,18 @@ public class FTDevice {
     }
 
     /**
-	 * Set the event notification handler.
-	 * 
-	 * @param eventHandler
-	 *            The event handler
+     * Set the event notification handler.
+     * 
+     * @param eventHandler
+     *            The event handler
+     * @param eventMask
+     *            the event mask, e.g. FTD2XX.NotificationEvents.FT_EVENT_RXCHAR |
+     *            FTD2XX.NotificationEvents.FT_EVENT_MODEM_STATUS
      * @throws FTD2XXException
      *             If something goes wrong.
-	 */
-    public void SetEventNotification(Pointer eventHandler) throws FTD2XXException {
-
-        int eventMask = FTD2XX.NotificationEvents.FT_EVENT_RXCHAR;
+     */
+    public void SetEventNotification(Pointer eventHandler, int eventMask) throws FTD2XXException {
         ensureFTStatus(ftd2xx.FT_SetEventNotification(ftHandle, eventMask, eventHandler));
-
     }
 
     /**
