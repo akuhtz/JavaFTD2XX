@@ -5,7 +5,6 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 
 public interface LibPThread extends Library {
 
@@ -14,63 +13,108 @@ public interface LibPThread extends Library {
     LibPThread INSTANCE = Native.load(NAME, LibPThread.class);
 
     @FieldOrder({ "eCondVar", "eMutex", "iVar" })
-    public class EVENT_HANDLE extends Structure {
+    public static class EVENT_HANDLE extends Structure {
         public pthread_cond_t eCondVar;
 
         public pthread_mutex_t eMutex;
 
         public int iVar;
+
+        public EVENT_HANDLE() {
+            eCondVar = new pthread_cond_t();
+            eMutex = new pthread_mutex_t();
+            allocateMemory();
+        }
+
+        // // You can either override or create a separate helper method
+        // @Override
+        // public void useMemory(Pointer m) {
+        // super.useMemory(m);
+        // }
     }
 
-    @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9" })
-    public class pthread_mutex_t extends Structure {
-        public DWORD dummy0;
+    @FieldOrder({ "mutex" })
+    public static class pthread_mutex_t extends Structure {
+        public byte[] mutex;
 
-        public DWORD dummy1;
-
-        public DWORD dummy2;
-
-        public DWORD dummy3;
-
-        public DWORD dummy4;
-
-        public DWORD dummy5;
-
-        public DWORD dummy6;
-
-        public DWORD dummy7;
-
-        public DWORD dummy8;
-
-        public DWORD dummy9;
+        public pthread_mutex_t() {
+            mutex = new byte[5 * Native.LONG_SIZE];
+            allocateMemory();
+        }
     }
 
-    @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9",
-        "dummy10", "dummy11" })
-    public class pthread_cond_t extends Structure {
-        public DWORD dummy0;
+    // @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9"
+    // })
+    // public static class pthread_mutex_t extends Structure {
+    // public NativeLong dummy0;
+    //
+    // public NativeLong dummy1;
+    //
+    // public NativeLong dummy2;
+    //
+    // public NativeLong dummy3;
+    //
+    // public NativeLong dummy4;
+    //
+    // public NativeLong dummy5;
+    //
+    // public NativeLong dummy6;
+    //
+    // public NativeLong dummy7;
+    //
+    // public NativeLong dummy8;
+    //
+    // public NativeLong dummy9;
+    //
+    // // You can either override or create a separate helper method
+    // @Override
+    // public void useMemory(Pointer m) {
+    // super.useMemory(m);
+    // }
+    // }
 
-        public DWORD dummy1;
+    // @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9",
+    // "dummy10", "dummy11" })
+    // public static class pthread_cond_t extends Structure {
+    // public NativeLong dummy0;
+    //
+    // public NativeLong dummy1;
+    //
+    // public NativeLong dummy2;
+    //
+    // public NativeLong dummy3;
+    //
+    // public NativeLong dummy4;
+    //
+    // public NativeLong dummy5;
+    //
+    // public NativeLong dummy6;
+    //
+    // public NativeLong dummy7;
+    //
+    // public NativeLong dummy8;
+    //
+    // public NativeLong dummy9;
+    //
+    // public NativeLong dummy10;
+    //
+    // public NativeLong dummy11;
+    //
+    // // You can either override or create a separate helper method
+    // @Override
+    // public void useMemory(Pointer m) {
+    // super.useMemory(m);
+    // }
+    // }
 
-        public DWORD dummy2;
+    @FieldOrder({ "cond" })
+    public static class pthread_cond_t extends Structure {
+        public byte[] cond;
 
-        public DWORD dummy3;
-
-        public DWORD dummy4;
-
-        public DWORD dummy5;
-
-        public DWORD dummy6;
-
-        public DWORD dummy7;
-
-        public DWORD dummy8;
-
-        public DWORD dummy9;
-
-        public DWORD dummy10;
-
-        public DWORD dummy11;
+        public pthread_cond_t() {
+            cond = new byte[6 * Native.LONG_SIZE];
+            allocateMemory();
+        }
     }
 
     int pthread_mutex_init(Pointer mutex, Pointer attr);
