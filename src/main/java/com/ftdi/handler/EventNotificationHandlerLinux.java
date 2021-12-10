@@ -39,9 +39,11 @@ public class EventNotificationHandlerLinux extends AbstractEventNotificationHand
         LOGGER.info("Lock the mutex: {}", retVal);
         retVal = libPThreadExt.pthread_cond_wait(eventHandle.eCondVar.getPointer(), eventHandle.eMutex.getPointer());
         LOGGER.info("Wait on cond: {}", retVal);
-        retVal = libPThreadExt.pthread_mutex_unlock(eventHandle.eMutex.getPointer());
-        LOGGER.info("Unlock the mutex: {}", retVal);
-
+        
+        if (eventHandle != null) {
+            retVal = libPThreadExt.pthread_mutex_unlock(eventHandle.eMutex.getPointer());
+            LOGGER.info("Unlock the mutex: {}", retVal);
+        }
     }
 
     @Override
@@ -49,12 +51,15 @@ public class EventNotificationHandlerLinux extends AbstractEventNotificationHand
         LOGGER.info("Close the handle: {}", eventHandle);
 
         if (eventHandle != null) {
-
-            int retVal = libPThreadExt.pthread_cond_signal(eventHandle.eCondVar.getPointer());
+        
+            EVENT_HANDLE hEvent = this.eventHandle;
+            this.eventHandle = null;
+            
+            int retVal = libPThreadExt.pthread_cond_signal(hEvent.eCondVar.getPointer());
             LOGGER.info("Signal the cond: {}", retVal);
 
-            libPThreadExt.pthread_cond_destroy(eventHandle.eCondVar.getPointer());
-            libPThreadExt.pthread_mutex_destroy(eventHandle.eMutex.getPointer());
+            libPThreadExt.pthread_cond_destroy(hEvent.eCondVar.getPointer());
+            libPThreadExt.pthread_mutex_destroy(hEvent.eMutex.getPointer());
             eventHandle = null;
         }
     }

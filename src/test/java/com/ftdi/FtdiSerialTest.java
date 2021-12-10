@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class FtdiSerialTest {
 
                     ftDevice.setUSBParameters(128, 64);
 
-                    ftDevice.setTimeouts(5, 500);
+                    // ftDevice.setTimeouts(5, 500);
 
                     ftDevice.purgeBuffer(true, true);
 
@@ -90,6 +91,7 @@ public class FtdiSerialTest {
                     send(ftDevice, "Hello World!", LineEndingEnum.CRLF);
 
                     received.await(1000, TimeUnit.MILLISECONDS);
+                    // Thread.sleep(300);
 
                     Assertions.assertEquals(0L, received.getCount(), "No data received!");
 
@@ -114,6 +116,7 @@ public class FtdiSerialTest {
     }
 
     @Test
+    @Disabled
     public void ftdiBlockTest() {
 
         long baudRate = 19200;

@@ -1,6 +1,7 @@
 package com.sun.jna.platform.unix;
 
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -14,106 +15,67 @@ public interface LibPThread extends Library {
 
     @FieldOrder({ "eCondVar", "eMutex", "iVar" })
     public static class EVENT_HANDLE extends Structure {
-        public pthread_cond_t eCondVar;
 
-        public pthread_mutex_t eMutex;
+        public pthread_cond_t.ByReference eCondVar;
+
+        public pthread_mutex_t.ByReference eMutex;
 
         public int iVar;
 
         public EVENT_HANDLE() {
-            eCondVar = new pthread_cond_t();
-            eMutex = new pthread_mutex_t();
-            allocateMemory();
-        }
 
-        // // You can either override or create a separate helper method
-        // @Override
-        // public void useMemory(Pointer m) {
-        // super.useMemory(m);
-        // }
+            setAlignType(ALIGN_NONE);
+
+            Memory mem = new Memory(pthread_cond_t.condSize() + pthread_mutex_t.mutexSize() + Integer.BYTES);
+
+            useMemory(mem);
+
+            eCondVar = new pthread_cond_t.ByReference(mem, 0);
+            eMutex = new pthread_mutex_t.ByReference(mem, pthread_cond_t.condSize());
+        }
     }
 
     @FieldOrder({ "mutex" })
     public static class pthread_mutex_t extends Structure {
+
+        public static class ByReference extends pthread_mutex_t implements Structure.ByReference {
+
+            public ByReference(Memory mem, long offset) {
+                super(mem, offset);
+            }
+        }
+
+        public static int mutexSize() {
+            return 5 * Native.LONG_SIZE;
+        }
+
         public byte[] mutex;
 
-        public pthread_mutex_t() {
-            mutex = new byte[5 * Native.LONG_SIZE];
-            allocateMemory();
+        public pthread_mutex_t(Memory mem, long offset) {
+            mutex = mem.getByteArray(offset, mutexSize());
+            useMemory(mem, (int) offset);
         }
     }
 
-    // @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9"
-    // })
-    // public static class pthread_mutex_t extends Structure {
-    // public NativeLong dummy0;
-    //
-    // public NativeLong dummy1;
-    //
-    // public NativeLong dummy2;
-    //
-    // public NativeLong dummy3;
-    //
-    // public NativeLong dummy4;
-    //
-    // public NativeLong dummy5;
-    //
-    // public NativeLong dummy6;
-    //
-    // public NativeLong dummy7;
-    //
-    // public NativeLong dummy8;
-    //
-    // public NativeLong dummy9;
-    //
-    // // You can either override or create a separate helper method
-    // @Override
-    // public void useMemory(Pointer m) {
-    // super.useMemory(m);
-    // }
-    // }
-
-    // @FieldOrder({ "dummy0", "dummy1", "dummy2", "dummy3", "dummy4", "dummy5", "dummy6", "dummy7", "dummy8", "dummy9",
-    // "dummy10", "dummy11" })
-    // public static class pthread_cond_t extends Structure {
-    // public NativeLong dummy0;
-    //
-    // public NativeLong dummy1;
-    //
-    // public NativeLong dummy2;
-    //
-    // public NativeLong dummy3;
-    //
-    // public NativeLong dummy4;
-    //
-    // public NativeLong dummy5;
-    //
-    // public NativeLong dummy6;
-    //
-    // public NativeLong dummy7;
-    //
-    // public NativeLong dummy8;
-    //
-    // public NativeLong dummy9;
-    //
-    // public NativeLong dummy10;
-    //
-    // public NativeLong dummy11;
-    //
-    // // You can either override or create a separate helper method
-    // @Override
-    // public void useMemory(Pointer m) {
-    // super.useMemory(m);
-    // }
-    // }
-
     @FieldOrder({ "cond" })
     public static class pthread_cond_t extends Structure {
+
+        public static class ByReference extends pthread_cond_t implements Structure.ByReference {
+
+            public ByReference(Memory mem, long offset) {
+                super(mem, offset);
+            }
+        }
+
+        public static int condSize() {
+            return 6 * Native.LONG_SIZE;
+        }
+
         public byte[] cond;
 
-        public pthread_cond_t() {
-            cond = new byte[6 * Native.LONG_SIZE];
-            allocateMemory();
+        public pthread_cond_t(Memory mem, long offset) {
+            cond = mem.getByteArray(offset, condSize());
+            useMemory(mem, (int) offset);
         }
     }
 
