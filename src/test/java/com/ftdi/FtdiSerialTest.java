@@ -6,7 +6,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class FtdiSerialTest {
 
                 final CountDownLatch received = new CountDownLatch(1);
 
-                AbstractEventNotificationHandler<?> handler = null;
+                AbstractDataHandler handler = null;
 
                 try {
                     ftDevice.open();
@@ -70,6 +69,16 @@ public class FtdiSerialTest {
                     }
                     else if (Platform.isLinux()) {
                         handler = new EventNotificationHandlerLinux() {
+                            @Override
+                            protected void processMessages(byte[] bytes) {
+                                LOGGER.info("Received data: {}", ByteUtils.bytesToHex(bytes));
+
+                                received.countDown();
+                            }
+                        };
+                    }
+                    else if (Platform.isMac()) {
+                        handler = new BlockingReaderHandler() {
                             @Override
                             protected void processMessages(byte[] bytes) {
                                 LOGGER.info("Received data: {}", ByteUtils.bytesToHex(bytes));
@@ -116,7 +125,6 @@ public class FtdiSerialTest {
     }
 
     @Test
-    @Disabled
     public void ftdiBlockTest() {
 
         long baudRate = 19200;
