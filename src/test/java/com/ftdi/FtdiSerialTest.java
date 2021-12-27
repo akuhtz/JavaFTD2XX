@@ -55,6 +55,10 @@ public class FtdiSerialTest {
 
                     // ftDevice.setTimeouts(5, 500);
 
+                    LOGGER.info("Set the event char.");
+                    ftDevice.setChars(ByteUtils.getLowByte(0xFE), (byte) 1, (byte) 0, (byte) 0);
+
+                    LOGGER.info("Purge the buffer.");
                     ftDevice.purgeBuffer(true, true);
 
                     if (Platform.isWindows()) {
@@ -97,7 +101,10 @@ public class FtdiSerialTest {
 
                     Thread.sleep(100);
 
-                    send(ftDevice, "Hello World!", LineEndingEnum.CRLF);
+                    send(ftDevice,
+                        ByteUtils
+                            .concat("Hello World!".getBytes(StandardCharsets.UTF_8),
+                                new byte[] { ByteUtils.getLowByte(0xFE), 0x00, 0x01 }));
 
                     received.await(1000, TimeUnit.MILLISECONDS);
                     // Thread.sleep(300);

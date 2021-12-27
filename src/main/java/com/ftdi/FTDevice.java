@@ -665,6 +665,25 @@ public class FTDevice {
     }
 
     /**
+     * Set the special characters for the device.
+     * 
+     * @param uEventChar
+     *            event characer.
+     * @param uEventCharEn
+     *            0 if event character disabled, non-zero otherwise.
+     * @param uErrorChar
+     *            error character.
+     * @param uErrorCharEn
+     *            0 if error character disabled, non-zero otherwise.
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public void setChars(byte uEventChar, byte uEventCharEn, byte uErrorChar, byte uErrorCharEn)
+        throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetChars(ftHandle, uEventChar, uEventCharEn, uErrorChar, uErrorCharEn));
+    }
+
+    /**
      * Set the USB request transfer size. This function can be used to change the transfer sizes from the default
      * transfer size of 4096 bytes to better suit the application requirements. Transfer sizes must be set to a multiple
      * of 64 bytes between 64 bytes and 64k bytes. When FT_SetUSBParameters is called, the change comes into effect
