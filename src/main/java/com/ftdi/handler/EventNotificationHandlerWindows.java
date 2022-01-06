@@ -26,9 +26,12 @@ public class EventNotificationHandlerWindows extends AbstractEventNotificationHa
     }
 
     @Override
-    protected void waitForNotificationEvent(final FTDevice ftDevice, int eventMask) throws FTD2XXException {
-
+    protected void registerEventHandle(final FTDevice ftDevice, int eventMask) throws FTD2XXException {
         ftDevice.SetEventNotification(eventHandle.getPointer(), eventMask);
+    }
+
+    @Override
+    protected void waitForNotificationEvent(final FTDevice ftDevice) throws FTD2XXException {
         kernel32.WaitForSingleObject(eventHandle, -1);
 
     }

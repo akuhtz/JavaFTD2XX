@@ -12,7 +12,12 @@ public class BlockingReaderHandler extends AbstractDataHandler {
     }
 
     @Override
-    protected void waitForNotificationEvent(FTDevice ftDevice, int eventMask) throws FTD2XXException {
+    protected void registerEventHandle(FTDevice ftDevice, int eventMask) throws FTD2XXException {
+        // not used
+    }
+
+    @Override
+    protected void waitForNotificationEvent(FTDevice ftDevice) throws FTD2XXException {
         // not used
     }
 

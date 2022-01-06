@@ -30,19 +30,23 @@ public class EventNotificationHandlerLinux extends AbstractEventNotificationHand
     }
 
     @Override
-    protected void waitForNotificationEvent(FTDevice ftDevice, int eventMask) throws FTD2XXException {
+    protected void registerEventHandle(final FTDevice ftDevice, int eventMask) throws FTD2XXException {
         LOGGER.info("SetEventNotification for event-handle @ {}", eventHandle.getPointer());
 
         ftDevice.SetEventNotification(eventHandle.getPointer(), eventMask);
+    }
+
+    @Override
+    protected void waitForNotificationEvent(FTDevice ftDevice) throws FTD2XXException {
 
         int retVal = libPThreadExt.pthread_mutex_lock(eventHandle.eMutex.getPointer());
-        LOGGER.info("Lock the mutex: {}", retVal);
+        LOGGER.trace("Locked the mutex: {}", retVal);
         retVal = libPThreadExt.pthread_cond_wait(eventHandle.eCondVar.getPointer(), eventHandle.eMutex.getPointer());
-        LOGGER.info("Wait on cond: {}", retVal);
-        
+        LOGGER.trace("Wait on cond: {}", retVal);
+
         if (eventHandle != null) {
             retVal = libPThreadExt.pthread_mutex_unlock(eventHandle.eMutex.getPointer());
-            LOGGER.info("Unlock the mutex: {}", retVal);
+            LOGGER.trace("Unlocked the mutex: {}", retVal);
         }
     }
 
@@ -51,10 +55,10 @@ public class EventNotificationHandlerLinux extends AbstractEventNotificationHand
         LOGGER.info("Close the handle: {}", eventHandle);
 
         if (eventHandle != null) {
-        
+
             EVENT_HANDLE hEvent = this.eventHandle;
             this.eventHandle = null;
-            
+
             int retVal = libPThreadExt.pthread_cond_signal(hEvent.eCondVar.getPointer());
             LOGGER.info("Signal the cond: {}", retVal);
 

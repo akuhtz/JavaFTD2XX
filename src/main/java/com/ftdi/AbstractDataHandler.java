@@ -35,7 +35,9 @@ public abstract class AbstractDataHandler {
 
     protected abstract void createEventHandle();
 
-    protected abstract void waitForNotificationEvent(final FTDevice ftDevice, int eventMask) throws FTD2XXException;
+    protected abstract void registerEventHandle(final FTDevice ftDevice, int eventMask) throws FTD2XXException;
+
+    protected abstract void waitForNotificationEvent(final FTDevice ftDevice) throws FTD2XXException;
 
     protected abstract int readData(final FTDevice ftDevice) throws FTD2XXException;
 
@@ -68,7 +70,8 @@ public abstract class AbstractDataHandler {
         public void run() {
             receiverRunning.set(true);
 
-            Thread.currentThread().setPriority(NORM_PRIORITY - 1);
+            // set the thread priority to MAX_PRIORITY
+            setPriority(MAX_PRIORITY);
 
             final FTDevice ftDevice = getFTDevice();
 
@@ -77,20 +80,31 @@ public abstract class AbstractDataHandler {
             }
             catch (FTD2XXException ex) {
                 LOGGER.warn("Configure the device failed.", ex);
+                handleFatalError(ftDevice);
+                return;
             }
 
             LOGGER.info("Started the receiver thread.");
 
             createEventHandle();
 
-            int eventMask = FTD2XX.NotificationEvents.FT_EVENT_RXCHAR | FTD2XX.NotificationEvents.FT_EVENT_MODEM_STATUS;
+            try {
+                int eventMask =
+                    FTD2XX.NotificationEvents.FT_EVENT_RXCHAR | FTD2XX.NotificationEvents.FT_EVENT_MODEM_STATUS;
+                registerEventHandle(ftDevice, eventMask);
+            }
+            catch (FTD2XXException ex) {
+                LOGGER.warn("Register the event handle on the device failed.", ex);
+                handleFatalError(ftDevice);
+                return;
+            }
 
             while (receiverRunning.get()) {
 
                 try {
                     LOGGER.debug("Try to read data");
 
-                    waitForNotificationEvent(ftDevice, eventMask);
+                    waitForNotificationEvent(ftDevice);
 
                     int len = readData(ftDevice);
 
@@ -128,11 +142,7 @@ public abstract class AbstractDataHandler {
                 catch (FTD2XXException ex) {
                     LOGGER.warn("Receive data failed with an exception!", ex);
 
-                    receiverRunning.set(false);
-
-                    if (ftDevice == null || ftDevice.isOpen()) {
-                        triggerClosePort();
-                    }
+                    handleFatalError(ftDevice);
                 }
                 catch (NullPointerException ex) {
                     LOGGER.error("Receive data failed with an NPE! The port might be closed.", ex);
@@ -148,6 +158,14 @@ public abstract class AbstractDataHandler {
             closeHandle();
 
             LOGGER.info("Leaving receiver loop.");
+        }
+    }
+
+    protected void handleFatalError(final FTDevice ftDevice) {
+        receiverRunning.set(false);
+
+        if (ftDevice == null || ftDevice.isOpen()) {
+            triggerClosePort();
         }
     }
 
