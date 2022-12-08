@@ -663,6 +663,19 @@ public class FTDevice {
         ensureFTStatus(ftd2xx.FT_GetBitMode(ftHandle, byt));
         return BitModes.parse(byt.getValue());
     }
+    
+    /**
+     * Gets current state of pins. This function is usefull when CBUS Bit Bang was set
+     *
+     * @return pin values
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public byte getPins() throws FTD2XXException {
+        ByteByReference byt = new ByteByReference();
+        ensureFTStatus(ftd2xx.FT_GetBitMode(ftHandle, byt));
+        return byt.getValue();
+    }
 
     /**
      * Set the USB request transfer size. This function can be used to change the transfer sizes from the default
