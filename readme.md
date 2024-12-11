@@ -1,5 +1,8 @@
 # JavaFTD2XX
 
+[![Build Status](https://github.com/akuhtz/JavaFTD2XX/workflows/Java%20CI/badge.svg)](https://github.com/akuhtz/JavaFTD2XX/actions)
+
+
 This project is a Java wrapper for the FTD2XX driver of FTDI. The drivers are provided by JavaFTD2XX and no native installation is required.
 
 Since 0.3.6 it supports the usage of event notification for receiving data.
