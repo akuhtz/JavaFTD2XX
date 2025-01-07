@@ -1,8 +1,11 @@
 name: Java CI
 
 on: 
-  - push
-  - pull_request
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags-ignore:
+      - '**'
+  pull_request:
 
 jobs:
   build:
