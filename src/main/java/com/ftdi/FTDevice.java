@@ -410,6 +410,18 @@ public class FTDevice {
     }
 
     /**
+     * Set device divisor. This function also sets the baud rate for the device. It is used to set non-standard baud rates.
+     *
+     * @param divisor
+     *                    The divisor.
+     * @throws FTD2XXException
+     *                             If something goes wrong.
+     */
+    public void setDivisor(final int divisor) throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetDivisor(ftHandle, (short) divisor));
+    }
+
+    /**
      * This function sets the data characteristics for the device
      *
      * @param wordLength
@@ -885,6 +897,26 @@ public class FTDevice {
         Memory source = new Memory(data.length());
         source.setString(0, data);
         ensureFTStatus(ftd2xx.FT_EE_UAWrite(ftHandle, source, data.length()));
+    }
+
+    /**
+     * Sets the BREAK condition for the device.
+     *
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public void setBreakOn() throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetBreakOn(ftHandle));
+    }
+
+    /**
+     * Resets the BREAK condition for the device.
+     *
+     * @throws FTD2XXException
+     *             If something goes wrong.
+     */
+    public void setBreakOff() throws FTD2XXException {
+        ensureFTStatus(ftd2xx.FT_SetBreakOff(ftHandle));
     }
 
     /**
