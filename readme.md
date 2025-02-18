@@ -1,7 +1,7 @@
 # JavaFTD2XX
 
 [![Build Status](https://github.com/akuhtz/JavaFTD2XX/workflows/Java%20CI/badge.svg)](https://github.com/akuhtz/JavaFTD2XX/actions)
-
+[![Maven Central](https://img.shields.io/maven-central/v/org.bidib.com.ftdi/FTD2xxJ.svg?label=Maven%20Central&style=flat)](https://search.maven.org/artifact/org.bidib.com.ftdi/FTD2xxJ)
 
 This project is a Java wrapper for the FTD2XX driver of FTDI. The drivers are provided by JavaFTD2XX and no native installation is required.
 
