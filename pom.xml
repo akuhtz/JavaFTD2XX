@@ -262,7 +262,8 @@
                             -->
                             <waitUntil>validated</waitUntil>
                         </configuration>
-                    </plugin>                </plugins>
+                    </plugin>                
+				</plugins>
             </build>
         </profile>
     </profiles>
