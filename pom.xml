@@ -17,7 +17,7 @@
 		
 		<jna-version>5.18.0</jna-version>
 		<slf4j-version>2.0.17</slf4j-version>
-		<junit-jupiter-version>5.13.4</junit-jupiter-version>
+		<junit-jupiter-version>5.14.0</junit-jupiter-version>
 		<logback-version>1.2.13</logback-version>
 	</properties>
 
