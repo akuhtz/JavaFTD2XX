@@ -6,7 +6,7 @@
 
 	<groupId>org.bidib.com.ftdi</groupId>
 	<artifactId>FTD2xxJ</artifactId>
-	<version>0.3.10-SNAPSHOT</version>
+	<version>0.4.0-SNAPSHOT</version>
 
     <name>jBiDiB :: FTDI D2XX</name>
     <description>jBiDiB FTDI D2XX POM</description>
@@ -15,6 +15,9 @@
         <gpg.useagent>true</gpg.useagent>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
+        <java.version>17</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        
 		<jna-version>5.19.1</jna-version>
 		<slf4j-version>2.0.18</slf4j-version>
 		<junit-jupiter-version>5.14.4</junit-jupiter-version>
@@ -109,8 +112,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
